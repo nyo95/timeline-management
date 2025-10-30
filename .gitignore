@@ -1,0 +1,38 @@
+# Node / Next.js
+node_modules/
+.pnp.cjs
+.pnp.loader.mjs
+.yarn/
+pnpm-lock.yaml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js build outputs
+.next/
+.vercel/
+.turbo/
+out/
+dist/
+coverage/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+prisma/*.db*
+
+# Uploads / local storage (sesuaikan jika perlu)
+uploads/
+storage/
+
