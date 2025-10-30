@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { buildSequentialPhases } from '@/lib/phases'
 
 export async function GET() {
   const projects = await prisma.project.findMany({
@@ -14,6 +15,8 @@ export async function POST(req: Request) {
   const { name, clientName, deadline } = data
   if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 })
 
+  const baseDate = new Date()
+  const phaseSeeds = buildSequentialPhases(baseDate)
   const project = await prisma.project.create({
     data: {
       name,
@@ -22,13 +25,13 @@ export async function POST(req: Request) {
       status: 'NEW',
       currentPhase: 'MOODBOARD',
       phases: {
-        create: [
-          { type: 'MOODBOARD', index: 1, status: 'ACTIVE' },
-          { type: 'LAYOUT', index: 2, status: 'LOCKED' },
-          { type: 'DESIGN', index: 3, status: 'LOCKED' },
-          { type: 'MATERIAL', index: 4, status: 'LOCKED' },
-          { type: 'CONSTRUCTION', index: 5, status: 'LOCKED' },
-        ],
+        create: phaseSeeds.map((p) => ({
+          type: p.type as any,
+          index: p.index,
+          status: p.status as any,
+          startDate: p.startDate,
+          endDate: p.endDate,
+        })),
       },
     },
     include: { phases: true },
@@ -36,4 +39,3 @@ export async function POST(req: Request) {
 
   return NextResponse.json(project)
 }
-

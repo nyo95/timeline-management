@@ -63,6 +63,9 @@ model Project {
 
   phases       Phase[]
   assignments  Assignment[]
+  todos        Todo[]
+  approvals    Approval[]
+  notifications Notification[]
 }
 
 model Phase {
@@ -75,6 +78,7 @@ model Phase {
   startDate DateTime?
   endDate   DateTime?
   revisions Revision[]
+  approvals Approval[]
 }
 
 model Revision {
@@ -110,3 +114,49 @@ model Assignment {
   role      Role
 }
 
+enum ApprovalActor {
+  BOSS
+  CLIENT
+  DESIGNER
+}
+
+model Approval {
+  id         String        @id @default(cuid())
+  project    Project       @relation(fields: [projectId], references: [id])
+  projectId  String
+  phase      Phase?        @relation(fields: [phaseId], references: [id])
+  phaseId    String?
+  actor      ApprovalActor
+  status     RevisionStatus @default(PENDING)
+  notes      String?
+  createdAt  DateTime      @default(now())
+}
+
+model Todo {
+  id         String   @id @default(cuid())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String
+  title      String
+  done       Boolean  @default(false)
+  dueDate    DateTime?
+  assignee   User?    @relation(fields: [assigneeId], references: [id])
+  assigneeId String?
+  createdAt  DateTime  @default(now())
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  DEADLINE
+  APPROVAL
+}
+
+model Notification {
+  id         String            @id @default(cuid())
+  project    Project           @relation(fields: [projectId], references: [id])
+  projectId  String
+  type       NotificationType
+  message    String
+  createdAt  DateTime          @default(now())
+  read       Boolean           @default(false)
+}
