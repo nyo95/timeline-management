@@ -4,15 +4,14 @@ Repositori ini menyiapkan fondasi untuk aplikasi manajemen proyek interior (Next
 
 Status saat ini:
 - Commit awal: README + .gitignore
-- Folder `timeline-management/` disiapkan untuk sumber kode aplikasi (saat ini kosong)
+- Folder `timeline-management/` berisi kerangka aplikasi Next.js + Prisma (skeleton)
 
 Langkah umum pengembangan (rule of thumb):
-1. Buat struktur app (Next.js App Router)
-2. Tambah Prisma schema dan migrasi
-3. Implementasi fitur inti (project, phase, revision, file upload)
-4. Tambah UI (shadcn/ui + Tailwind)
-5. Setup scripts untuk dev/build
+1. Struktur app (Next.js App Router)
+2. Prisma schema + migrasi (SQLite)
+3. Fitur inti (project, phase, revision, file upload)
+4. UI (Tailwind; shadcn/ui bisa ditambah nanti)
+5. Scripts dev/build dan instruksi run
 
 Catatan:
 - File dan folder sementara/hasil build akan diabaikan oleh Git sesuai `.gitignore`.
-

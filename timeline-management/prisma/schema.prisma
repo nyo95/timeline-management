@@ -1,0 +1,112 @@
+// Prisma schema: SQLite untuk pengembangan lokal
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MANAGER
+  DESIGNER
+  DRAFTER
+}
+
+enum PhaseType {
+  MOODBOARD
+  LAYOUT
+  DESIGN
+  MATERIAL
+  CONSTRUCTION
+}
+
+enum PhaseStatus {
+  LOCKED
+  ACTIVE
+  APPROVED
+  REJECTED
+}
+
+enum ProjectStatus {
+  NEW
+  ACTIVE
+  FINISHED
+}
+
+enum RevisionStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      Role
+  createdAt DateTime @default(now())
+  assignments Assignment[]
+  files      File[]
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  clientName   String?
+  deadline     DateTime?
+  status       ProjectStatus @default(NEW)
+  currentPhase PhaseType     @default(MOODBOARD)
+  createdAt    DateTime      @default(now())
+
+  phases       Phase[]
+  assignments  Assignment[]
+}
+
+model Phase {
+  id        String      @id @default(cuid())
+  project   Project     @relation(fields: [projectId], references: [id])
+  projectId String
+  type      PhaseType
+  index     Int
+  status    PhaseStatus @default(LOCKED)
+  startDate DateTime?
+  endDate   DateTime?
+  revisions Revision[]
+}
+
+model Revision {
+  id        String         @id @default(cuid())
+  phase     Phase          @relation(fields: [phaseId], references: [id])
+  phaseId   String
+  number    Int
+  status    RevisionStatus @default(DRAFT)
+  notes     String?
+  createdAt DateTime       @default(now())
+  files     File[]
+}
+
+model File {
+  id           String   @id @default(cuid())
+  revision     Revision @relation(fields: [revisionId], references: [id])
+  revisionId   String
+  filename     String
+  filepath     String
+  filetype     String
+  size         Int
+  uploadedAt   DateTime @default(now())
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  uploadedById String?
+}
+
+model Assignment {
+  id        String  @id @default(cuid())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  role      Role
+}
+
